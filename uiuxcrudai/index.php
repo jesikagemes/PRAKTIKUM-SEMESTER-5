@@ -64,5 +64,3 @@ $result = mysqli_query($mysqli, "SELECT * FROM alat ORDER BY id DESC");
 
 </body>
 </html>
-
-<!-- Desain UI/UX CRUD dibuat menggunakan bantuan AI -->
