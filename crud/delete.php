@@ -1,13 +1,30 @@
 <?php
+session_start();
+
+// Cek apakah user sudah login
+if (!isset($_SESSION['status']) || $_SESSION['status'] != "login") {
+    header("Location: login.php?pesan=belum_login");
+    exit();
+}
+
 // include database connection file
 include_once("config.php");
 
-// Get id from URL to delete that user
-$id = $_GET['id'];
+// Ambil ID alat yang akan dihapus
+$id = isset($_GET['id']) ? intval($_GET['id']) : 0;
 
-// Delete user row from table based on given id
-$result = mysqli_query($mysqli, "DELETE FROM alat WHERE id=$id");
+// Ambil info nama file gambar untuk dihapus dari folder uploads
+$res = mysqli_query($mysqli, "SELECT gambar FROM alat WHERE id = $id");
+if ($res && $data = mysqli_fetch_assoc($res)) {
+    if (!empty($data['gambar']) && file_exists(__DIR__ . '/uploads/' . $data['gambar'])) {
+        @unlink(__DIR__ . '/uploads/' . $data['gambar']);
+    }
+}
 
-// After delete redirect to Home, so that latest user list will be displayed.
-header("Location:index.php");
+// Hapus data alat dari tabel database
+$result = mysqli_query($mysqli, "DELETE FROM alat WHERE id = $id");
+
+// Alihkan kembali ke halaman utama
+header("Location: index.php");
+exit();
 ?>
